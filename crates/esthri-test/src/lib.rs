@@ -1,5 +1,3 @@
-#![cfg_attr(feature = "aggressive_lint", deny(warnings))]
-
 use aws_sdk_s3::Client as S3Client;
 use aws_smithy_runtime::client::http::hyper_014::HyperClientBuilder;
 use esthri_internals::new_https_connector;
