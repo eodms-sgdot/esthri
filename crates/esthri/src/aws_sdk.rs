@@ -160,9 +160,14 @@ impl Stream for FutureStreamByteStreamWrapper {
     type Item = Result<Bytes>;
 
     fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        Pin::new(&mut self.0)
-            .poll_next(cx)
-            .map(|opt| opt.map(|res| res.map_err(|e| Error::ByteStreamError(e.to_string()))))
+        Pin::new(&mut self.0).poll_next(cx).map(|opt| {
+            opt.map(|res| {
+                res.map_err(|e| {
+                    log::error!("ByteStream error: {e:#?}");
+                    Error::ByteStreamError(e.to_string())
+                })
+            })
+        })
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
